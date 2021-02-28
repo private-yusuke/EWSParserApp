@@ -34,10 +34,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     /**
-     * 緊急警報放送のパース結果を画面上のテキスト部分に反映します。
+     * 緊急警報放送のパース結果や読み込めたビット列の流さを画面上のテキスト部分に反映します。
      */
-    fun updateText(text: String) {
-        findViewById<TextView>(R.id.decoded_string).text = text
+    fun updateText(parsedString: String, decodedLength: Int) {
+        findViewById<TextView>(R.id.decoded_string).text = parsedString
+        findViewById<TextView>(R.id.decoded_length).text = decodedLength.toString()
     }
 
     /**
@@ -86,8 +87,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 else mark = EWSMark.ONE
             } else mark = EWSMark.UNKNOWN
 
+            // 今回読み取ったマークを履歴に追加
+            if (mark != EWSMark.UNKNOWN)
+                currentSignals.add(mark)
+
             // 緊急警報放送は信号の種類に関わらず先頭 100 ビットを正常に読み取れればそれで内容は確定するので、100 ビット読んだら結果をディスプレイ開始
-            if(mark == EWSMark.UNKNOWN || currentSignals.size == 100) {
+            if(mark == EWSMark.UNKNOWN || currentSignals.size >= 100) {
                 if(currentSignals.isNotEmpty()) {
                     Log.d("EWSCurrentSignal", currentSignals.joinToString(""))
                     Log.d("EWSCurrentSignal", "length: ${currentSignals.size.toString()}")
@@ -99,14 +104,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                         res = "try again"
                     }
                     runOnUiThread {
-                        updateText(res)
+                        updateText(res, currentSignals.size)
                     }
                 }
                 if(mark == EWSMark.UNKNOWN)
                     currentSignals.clear()
             } else {
-                // 今回読み取ったマークを履歴に追加
-                currentSignals.add(mark)
+                runOnUiThread {
+                    updateText("listening...", currentSignals.size)
+                }
             }
         }
     }
