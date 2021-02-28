@@ -5,7 +5,7 @@ name: Android CI
 on:
   push:
     branches:
-      - main # mainブランチへのマージを契機にビルドする
+      - main # main ブランチへのマージを契機にビルドする
 
 jobs:
   build:
@@ -27,8 +27,19 @@ jobs:
         run: ./gradlew testDebug
       - name: Build with Gradle
         run: ./gradlew assembleDebug
+      # - name: Upload apk file
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: apk
+      #     path: app/build/outputs/apk/debug/app-debug.apk
+
       - name: Upload apk file
-        uses: actions/upload-artifact@v1
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          name: apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            LICENSE
+            app/build/outputs/apk/debug/app-debug.apk
