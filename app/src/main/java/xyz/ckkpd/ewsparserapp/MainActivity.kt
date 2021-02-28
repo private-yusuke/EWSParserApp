@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val micPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
         if(micPermissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
+        } else {
+            launch { startDecoding() }
         }
     }
 
