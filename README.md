@@ -21,6 +21,6 @@
 
 # How to use
 
-[ここ](https://github.com/private-yusuke/EWSParserApp/actions) の Artifact から apk ファイルを落とす
+[ここ](https://github.com/private-yusuke/EWSParserApp/releases/tag/latest) から apk ファイルを落とす
 
 または Android Studio で開いていい感じに自分の端末に入れる
