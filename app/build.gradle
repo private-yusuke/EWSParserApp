@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.myapplication"
+        applicationId "xyz.ckkpd.ewsparserapp"
         minSdkVersion 29
         targetSdkVersion 30
         versionCode 1
