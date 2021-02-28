@@ -18,3 +18,7 @@
 <td>→→→</td>
 <td><img src="https://user-images.githubusercontent.com/30387586/109414933-2c2e9500-79f9-11eb-986e-31b4a3ce7af0.png" width="250px"></td>
 </table>
+
+# How to use
+
+Android Studio で開いていい感じに自分の端末に入れる
