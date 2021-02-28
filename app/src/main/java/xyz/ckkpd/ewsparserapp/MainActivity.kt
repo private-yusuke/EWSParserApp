@@ -1,5 +1,7 @@
 package xyz.ckkpd.ewsparserapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -7,8 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.myapplication.R
 import kotlinx.coroutines.*
+import org.w3c.dom.Text
 import java.lang.Exception
 
 const val SAMPLING_RATE = 48000
@@ -24,13 +29,26 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        bufSize = AudioRecord.getMinBufferSize(SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+
+        val micPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        if(micPermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if(grantResults.size <= 0) return
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            launch { startDecoding() }
+        }
+        else {
+            findViewById<TextView>(R.id.decoded_string).text = "マイク読み取りの権限が与えられていません。システムの設定から権限を与えてください。"
+        }
     }
 
     override fun onResume() {
         super.onResume()
-
-        launch { startDecoding() }
+        bufSize = AudioRecord.getMinBufferSize(SAMPLING_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
     }
 
     /**
